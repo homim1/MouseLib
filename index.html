@@ -285,404 +285,265 @@
 
 <script>
 
-/* =========================================================
-   PACK DATABASE
-========================================================= */
+function uploadPack() {
 
-const packs = [
+    const modal = document.getElementById("modal");
 
-    {
-        name: "Cyber Neon",
-        author: "void.exe",
-        category: "neon",
-        rating: "4.9",
-        downloads: "12.8K",
-        color: "cyan",
-        description:
-            "Futuristic cyan cursor pack with a clean cyberpunk aesthetic."
-    },
+    modal.innerHTML = `
 
-    {
-        name: "Purple Haze",
-        author: "Luna",
-        category: "aesthetic",
-        rating: "4.8",
-        downloads: "9.4K",
-        color: "purple",
-        description:
-            "Soft purple neon cursors inspired by futuristic interfaces."
-    },
+        <div class="modal-box upload-modal">
 
-    {
-        name: "Night Drive",
-        author: "zero",
-        category: "gaming",
-        rating: "4.9",
-        downloads: "8.7K",
-        color: "pink",
-        description:
-            "Dark gaming cursor set with aggressive neon accents."
-    },
+            <div class="modal-content">
 
-    {
-        name: "Mint OS",
-        author: "pixeldev",
-        category: "minimal",
-        rating: "4.7",
-        downloads: "6.1K",
-        color: "green",
-        description:
-            "Minimal mint cursor collection for clean desktop setups."
-    },
-
-    {
-        name: "Cyber Angel",
-        author: "Akira",
-        category: "anime",
-        rating: "5.0",
-        downloads: "21.2K",
-        color: "pink",
-        description:
-            "Anime inspired cyber angel cursor collection."
-    },
-
-    {
-        name: "Void",
-        author: "NØX",
-        category: "dark",
-        rating: "4.8",
-        downloads: "14.6K",
-        color: "purple",
-        description:
-            "Deep black and purple cursor pack made for dark setups."
-    },
-
-    {
-        name: "Pixel Quest",
-        author: "8bitkid",
-        category: "pixel",
-        rating: "4.6",
-        downloads: "5.3K",
-        color: "green",
-        description:
-            "Classic pixel-art cursor pack with retro game vibes."
-    },
-
-    {
-        name: "Bubble Pop",
-        author: "mimi",
-        category: "cute",
-        rating: "4.9",
-        downloads: "7.8K",
-        color: "pink",
-        description:
-            "Cute colorful cursor pack with playful bubble aesthetics."
-    }
-
-];
-
-
-/* =========================================================
-   STATE
-========================================================= */
-
-let currentCategory = "all";
-let currentPack = null;
-
-
-/* =========================================================
-   CREATE CARD
-========================================================= */
-
-function createPackCard(pack) {
-
-    return `
-
-        <article
-            class="pack"
-            onclick='openPack(${JSON.stringify(pack)})'
-            data-category="${pack.category}"
-        >
-
-            <div class="pack-preview">
-
-                <div class="preview-bg"></div>
-
-                <div class="preview-grid"></div>
-
-                <div class="pack-tag">
-                    ${pack.category.toUpperCase()}
+                <div class="modal-title">
+                    Upload Cursor Pack
                 </div>
 
-                <div class="cursor-shape ${pack.color}">
+                <div class="modal-author">
+                    Publish your own cursor pack
                 </div>
+
+                <form id="uploadForm">
+
+                    <label>
+                        Pack name
+                    </label>
+
+                    <input
+                        id="uploadName"
+                        type="text"
+                        placeholder="My Awesome Cursor"
+                        required
+                    >
+
+                    <label>
+                        Author
+                    </label>
+
+                    <input
+                        id="uploadAuthor"
+                        type="text"
+                        placeholder="Your name"
+                        required
+                    >
+
+                    <label>
+                        Category
+                    </label>
+
+                    <select id="uploadCategory">
+
+                        <option value="neon">Neon</option>
+                        <option value="gaming">Gaming</option>
+                        <option value="anime">Anime</option>
+                        <option value="minimal">Minimal</option>
+                        <option value="pixel">Pixel</option>
+                        <option value="cute">Cute</option>
+                        <option value="dark">Dark</option>
+                        <option value="aesthetic">Aesthetic</option>
+
+                    </select>
+
+                    <label>
+                        Description
+                    </label>
+
+                    <textarea
+                        id="uploadDescription"
+                        placeholder="Describe your cursor pack..."
+                        required
+                    ></textarea>
+
+                    <label>
+                        Cursor color
+                    </label>
+
+                    <select id="uploadColor">
+
+                        <option value="cyan">Cyan</option>
+                        <option value="purple">Purple</option>
+                        <option value="pink">Pink</option>
+                        <option value="green">Green</option>
+
+                    </select>
+
+                    <label>
+                        Cursor pack ZIP
+                    </label>
+
+                    <input
+                        id="uploadFile"
+                        type="file"
+                        accept=".zip"
+                        required
+                    >
+
+                    <div class="modal-actions">
+
+                        <button
+                            type="submit"
+                            class="download-btn"
+                        >
+                            ↑ PUBLISH PACK
+                        </button>
+
+                        <button
+                            type="button"
+                            class="close-btn"
+                            onclick="closeModal()"
+                        >
+                            Cancel
+                        </button>
+
+                    </div>
+
+                </form>
 
             </div>
 
-
-            <div class="pack-info">
-
-                <div class="pack-name">
-                    ${pack.name}
-                </div>
-
-                <div class="pack-author">
-                    by ${pack.author}
-                </div>
-
-
-                <div class="pack-bottom">
-
-                    <div class="rating">
-                        ★ ${pack.rating}
-                    </div>
-
-                    <div class="downloads">
-                        ↓ ${pack.downloads}
-                    </div>
-
-                </div>
-
-            </div>
-
-        </article>
+        </div>
 
     `;
+
+    modal.classList.add("show");
+
+    document
+        .getElementById("uploadForm")
+        .addEventListener("submit", publishPack);
 }
 
 
-/* =========================================================
-   RENDER
-========================================================= */
+function publishPack(event) {
 
-function renderPacks() {
+    event.preventDefault();
 
-    const grid =
-        document.getElementById("packGrid");
+    const name =
+        document.getElementById("uploadName").value;
 
-    const newGrid =
-        document.getElementById("newGrid");
+    const author =
+        document.getElementById("uploadAuthor").value;
 
+    const category =
+        document.getElementById("uploadCategory").value;
 
-    let filtered =
-        packs.filter(pack => {
+    const description =
+        document.getElementById("uploadDescription").value;
 
-            if (
-                currentCategory !== "all" &&
-                pack.category !== currentCategory
-            ) {
-                return false;
-            }
+    const color =
+        document.getElementById("uploadColor").value;
 
-            return true;
-
-        });
+    const file =
+        document.getElementById("uploadFile").files[0];
 
 
-    grid.innerHTML =
-        filtered
-            .slice(0, 4)
-            .map(createPackCard)
-            .join("");
+    if (!file) {
+
+        alert("Выбери ZIP-файл пака.");
+
+        return;
+
+    }
 
 
-    newGrid.innerHTML =
-        filtered
-            .slice(4)
-            .map(createPackCard)
-            .join("");
+    if (!file.name.toLowerCase().endsWith(".zip")) {
+
+        alert("Пак должен быть ZIP-файлом.");
+
+        return;
+
+    }
+
+
+    const newPack = {
+
+        name: name,
+
+        author: author,
+
+        category: category,
+
+        rating: "New",
+
+        downloads: "0",
+
+        color: color,
+
+        description: description,
+
+        fileName: file.name
+
+    };
+
+
+    packs.unshift(newPack);
+
+
+    savePack(newPack);
+
+
+    currentCategory = "all";
+
+    document
+        .querySelectorAll(".category")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+
+    document
+        .querySelector(".category")
+        .classList.add("active");
+
+
+    renderPacks();
+
+    closeModal();
+
+
+    alert(
+        `Пак "${name}" опубликован!\n\n` +
+        `Файл: ${file.name}`
+    );
+
 }
 
 
-renderPacks();
+function savePack(pack) {
+
+    const saved =
+        JSON.parse(
+            localStorage.getItem("mouseLibPacks") || "[]"
+        );
+
+    saved.unshift(pack);
+
+    localStorage.setItem(
+        "mouseLibPacks",
+        JSON.stringify(saved)
+    );
+
+}
 
 
-/* =========================================================
-   SEARCH
-========================================================= */
+function loadSavedPacks() {
 
-function searchPacks() {
+    const saved =
+        JSON.parse(
+            localStorage.getItem("mouseLibPacks") || "[]"
+        );
 
-    const value =
-        document
-            .getElementById("searchInput")
-            .value
-            .toLowerCase();
+    saved.reverse().forEach(pack => {
 
-
-    const cards =
-        document.querySelectorAll(".pack");
-
-
-    cards.forEach(card => {
-
-        const text =
-            card.innerText.toLowerCase();
-
-        card.style.display =
-            text.includes(value)
-                ? ""
-                : "none";
+        packs.unshift(pack);
 
     });
 
 }
 
 
-/* =========================================================
-   CATEGORY
-========================================================= */
+loadSavedPacks();
 
-function filterCategory(category, button) {
-
-    currentCategory = category;
-
-
-    document
-        .querySelectorAll(".category")
-        .forEach(btn => {
-
-            btn.classList.remove("active");
-
-        });
-
-
-    button.classList.add("active");
-
-
-    renderPacks();
-
-
-    document
-        .getElementById("searchInput")
-        .value = "";
-
-}
-
-
-/* =========================================================
-   OPEN PACK
-========================================================= */
-
-function openPack(pack) {
-
-    currentPack = pack;
-
-
-    document
-        .getElementById("modalTitle")
-        .innerText = pack.name;
-
-
-    document
-        .getElementById("modalAuthor")
-        .innerText =
-            `by ${pack.author} · ★ ${pack.rating} · ↓ ${pack.downloads}`;
-
-
-    document
-        .getElementById("modalDescription")
-        .innerText =
-            pack.description;
-
-
-    document
-        .getElementById("modal")
-        .classList.add("show");
-
-
-    const cursor =
-        document
-            .querySelector("#modalPreview .cursor-shape");
-
-
-    cursor.className =
-        `cursor-shape ${pack.color}`;
-
-}
-
-
-/* =========================================================
-   CLOSE MODAL
-========================================================= */
-
-function closeModal() {
-
-    document
-        .getElementById("modal")
-        .classList.remove("show");
-
-}
-
-
-function closeModalOutside(event) {
-
-    if (
-        event.target.id === "modal"
-    ) {
-        closeModal();
-    }
-
-}
-
-
-/* =========================================================
-   DOWNLOAD
-========================================================= */
-
-function downloadPack() {
-
-    if (!currentPack)
-        return;
-
-
-    /*
-       Здесь позже подключается настоящий ZIP:
-
-       window.location.href =
-           "/packs/" +
-           currentPack.name +
-           ".zip";
-    */
-
-
-    alert(
-        `Download: ${currentPack.name}\n\n` +
-        `Подключи ZIP-файл пака в /packs/`
-    );
-
-}
-
-
-/* =========================================================
-   UPLOAD
-========================================================= */
-
-function uploadPack() {
-
-    alert(
-        "Upload system будет подключён к backend."
-    );
-
-}
-
-
-/* =========================================================
-   ESC
-========================================================= */
-
-document.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Escape"
-        ) {
-            closeModal();
-        }
-
-    }
-);
+renderPacks();
 
 </script>
 
