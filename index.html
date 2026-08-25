@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css">
+<title>mouseLib — Cursor Packs</title>
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<header class="navbar">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            M
+        </div>
+
+        mouseLib
+
+    </div>
+
+
+    <nav class="nav">
+
+        <a href="#">Browse</a>
+        <a href="#">Categories</a>
+        <a href="#">Creators</a>
+        <a href="#">Popular</a>
+
+    </nav>
+
+
+    <div class="nav-spacer"></div>
+
+
+    <button class="upload-btn"
+            onclick="uploadPack()">
+
+        + Upload Pack
+
+    </button>
+
+</header>
+
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+
+<section class="hero">
+
+    <div class="hero-badge">
+        ✦ THE CURSOR LIBRARY
+    </div>
+
+
+    <h1>
+        Your mouse.<br>
+        <span>Your style.</span>
+    </h1>
+
+
+    <p>
+        Discover thousands of custom cursor packs,
+        download your favorites and give your desktop
+        a completely different vibe.
+    </p>
+
+
+    <div class="search">
+
+        <div class="search-icon">
+            ⌕
+        </div>
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Search cursor packs..."
+            oninput="searchPacks()"
+        >
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     CONTENT
+===================================================== -->
+
+<main class="container">
+
+
+    <!-- CATEGORIES -->
+
+    <div class="categories">
+
+        <button class="category active"
+                onclick="filterCategory('all', this)">
+            All
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('neon', this)">
+            Neon
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('gaming', this)">
+            Gaming
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('anime', this)">
+            Anime
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('minimal', this)">
+            Minimal
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('pixel', this)">
+            Pixel
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('cute', this)">
+            Cute
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('dark', this)">
+            Dark
+        </button>
+
+        <button class="category"
+                onclick="filterCategory('aesthetic', this)">
+            Aesthetic
+        </button>
+
+    </div>
+
+
+    <!-- TRENDING -->
+
+    <div class="section-header">
+
+        <h2>
+            Trending Packs
+        </h2>
+
+        <span>
+            HOT RIGHT NOW
+        </span>
+
+        <div class="view-all">
+            View all →
+        </div>
+
+    </div>
+
+
+    <div
+        class="pack-grid"
+        id="packGrid"
+    ></div>
+
+
+    <!-- NEW -->
+
+    <div class="section-header">
+
+        <h2>
+            New Releases
+        </h2>
+
+        <span>
+            JUST DROPPED
+        </span>
+
+    </div>
+
+
+    <div
+        class="pack-grid"
+        id="newGrid"
+    ></div>
+
+
+</main>
+
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer>
+
+    <strong>mouseLib</strong>
+    — The home of custom cursors.
+
+    <br><br>
+
+    Made for people who think the default cursor is boring.
+
+</footer>
+
+
+<!-- =====================================================
+     MODAL
+===================================================== -->
+
+<div
+    class="modal"
+    id="modal"
+    onclick="closeModalOutside(event)"
+>
+
+    <div class="modal-box">
+
+
+        <div
+            class="modal-preview"
+            id="modalPreview"
+        >
+
+            <div class="cursor-shape"></div>
+
+        </div>
+
+
+        <div class="modal-content">
+
+            <div
+                class="modal-title"
+                id="modalTitle"
+            ></div>
+
+            <div
+                class="modal-author"
+                id="modalAuthor"
+            ></div>
+
+            <div
+                class="modal-description"
+                id="modalDescription"
+            ></div>
+
+
+            <div class="modal-actions">
+
+                <button
+                    class="download-btn"
+                    onclick="downloadPack()"
+                >
+                    ↓ DOWNLOAD PACK
+                </button>
+
+                <button
+                    class="close-btn"
+                    onclick="closeModal()"
+                >
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   PACK DATABASE
+========================================================= */
+
+const packs = [
+
+    {
+        name: "Cyber Neon",
+        author: "void.exe",
+        category: "neon",
+        rating: "4.9",
+        downloads: "12.8K",
+        color: "cyan",
+        description:
+            "Futuristic cyan cursor pack with a clean cyberpunk aesthetic."
+    },
+
+    {
+        name: "Purple Haze",
+        author: "Luna",
+        category: "aesthetic",
+        rating: "4.8",
+        downloads: "9.4K",
+        color: "purple",
+        description:
+            "Soft purple neon cursors inspired by futuristic interfaces."
+    },
+
+    {
+        name: "Night Drive",
+        author: "zero",
+        category: "gaming",
+        rating: "4.9",
+        downloads: "8.7K",
+        color: "pink",
+        description:
+            "Dark gaming cursor set with aggressive neon accents."
+    },
+
+    {
+        name: "Mint OS",
+        author: "pixeldev",
+        category: "minimal",
+        rating: "4.7",
+        downloads: "6.1K",
+        color: "green",
+        description:
+            "Minimal mint cursor collection for clean desktop setups."
+    },
+
+    {
+        name: "Cyber Angel",
+        author: "Akira",
+        category: "anime",
+        rating: "5.0",
+        downloads: "21.2K",
+        color: "pink",
+        description:
+            "Anime inspired cyber angel cursor collection."
+    },
+
+    {
+        name: "Void",
+        author: "NØX",
+        category: "dark",
+        rating: "4.8",
+        downloads: "14.6K",
+        color: "purple",
+        description:
+            "Deep black and purple cursor pack made for dark setups."
+    },
+
+    {
+        name: "Pixel Quest",
+        author: "8bitkid",
+        category: "pixel",
+        rating: "4.6",
+        downloads: "5.3K",
+        color: "green",
+        description:
+            "Classic pixel-art cursor pack with retro game vibes."
+    },
+
+    {
+        name: "Bubble Pop",
+        author: "mimi",
+        category: "cute",
+        rating: "4.9",
+        downloads: "7.8K",
+        color: "pink",
+        description:
+            "Cute colorful cursor pack with playful bubble aesthetics."
+    }
+
+];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+let currentCategory = "all";
+let currentPack = null;
+
+
+/* =========================================================
+   CREATE CARD
+========================================================= */
+
+function createPackCard(pack) {
+
+    return `
+
+        <article
+            class="pack"
+            onclick='openPack(${JSON.stringify(pack)})'
+            data-category="${pack.category}"
+        >
+
+            <div class="pack-preview">
+
+                <div class="preview-bg"></div>
+
+                <div class="preview-grid"></div>
+
+                <div class="pack-tag">
+                    ${pack.category.toUpperCase()}
+                </div>
+
+                <div class="cursor-shape ${pack.color}">
+                </div>
+
+            </div>
+
+
+            <div class="pack-info">
+
+                <div class="pack-name">
+                    ${pack.name}
+                </div>
+
+                <div class="pack-author">
+                    by ${pack.author}
+                </div>
+
+
+                <div class="pack-bottom">
+
+                    <div class="rating">
+                        ★ ${pack.rating}
+                    </div>
+
+                    <div class="downloads">
+                        ↓ ${pack.downloads}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    `;
+}
+
+
+/* =========================================================
+   RENDER
+========================================================= */
+
+function renderPacks() {
+
+    const grid =
+        document.getElementById("packGrid");
+
+    const newGrid =
+        document.getElementById("newGrid");
+
+
+    let filtered =
+        packs.filter(pack => {
+
+            if (
+                currentCategory !== "all" &&
+                pack.category !== currentCategory
+            ) {
+                return false;
+            }
+
+            return true;
+
+        });
+
+
+    grid.innerHTML =
+        filtered
+            .slice(0, 4)
+            .map(createPackCard)
+            .join("");
+
+
+    newGrid.innerHTML =
+        filtered
+            .slice(4)
+            .map(createPackCard)
+            .join("");
+}
+
+
+renderPacks();
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+function searchPacks() {
+
+    const value =
+        document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+
+    const cards =
+        document.querySelectorAll(".pack");
+
+
+    cards.forEach(card => {
+
+        const text =
+            card.innerText.toLowerCase();
+
+        card.style.display =
+            text.includes(value)
+                ? ""
+                : "none";
+
+    });
+
+}
+
+
+/* =========================================================
+   CATEGORY
+========================================================= */
+
+function filterCategory(category, button) {
+
+    currentCategory = category;
+
+
+    document
+        .querySelectorAll(".category")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+
+    button.classList.add("active");
+
+
+    renderPacks();
+
+
+    document
+        .getElementById("searchInput")
+        .value = "";
+
+}
+
+
+/* =========================================================
+   OPEN PACK
+========================================================= */
+
+function openPack(pack) {
+
+    currentPack = pack;
+
+
+    document
+        .getElementById("modalTitle")
+        .innerText = pack.name;
+
+
+    document
+        .getElementById("modalAuthor")
+        .innerText =
+            `by ${pack.author} · ★ ${pack.rating} · ↓ ${pack.downloads}`;
+
+
+    document
+        .getElementById("modalDescription")
+        .innerText =
+            pack.description;
+
+
+    document
+        .getElementById("modal")
+        .classList.add("show");
+
+
+    const cursor =
+        document
+            .querySelector("#modalPreview .cursor-shape");
+
+
+    cursor.className =
+        `cursor-shape ${pack.color}`;
+
+}
+
+
+/* =========================================================
+   CLOSE MODAL
+========================================================= */
+
+function closeModal() {
+
+    document
+        .getElementById("modal")
+        .classList.remove("show");
+
+}
+
+
+function closeModalOutside(event) {
+
+    if (
+        event.target.id === "modal"
+    ) {
+        closeModal();
+    }
+
+}
+
+
+/* =========================================================
+   DOWNLOAD
+========================================================= */
+
+function downloadPack() {
+
+    if (!currentPack)
+        return;
+
+
+    /*
+       Здесь позже подключается настоящий ZIP:
+
+       window.location.href =
+           "/packs/" +
+           currentPack.name +
+           ".zip";
+    */
+
+
+    alert(
+        `Download: ${currentPack.name}\n\n` +
+        `Подключи ZIP-файл пака в /packs/`
+    );
+
+}
+
+
+/* =========================================================
+   UPLOAD
+========================================================= */
+
+function uploadPack() {
+
+    alert(
+        "Upload system будет подключён к backend."
+    );
+
+}
+
+
+/* =========================================================
+   ESC
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (
+            event.key === "Escape"
+        ) {
+            closeModal();
+        }
+
+    }
+);
+
+</script>
+
+</body>
+</html>
